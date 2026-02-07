@@ -18,7 +18,7 @@ def main():
             print("Current distance: ", distance)
             if distance < STOP_DISTANCE:
                 px.forward(0)
-                music.sound_play('./car-double-horn.wav')
+                music.sound_play('../car-double-horn.wav')
                 move_forward = False
             else:
                 px.forward(50)
