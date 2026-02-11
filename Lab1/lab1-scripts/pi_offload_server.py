@@ -9,7 +9,7 @@ import asyncio
 app = FastAPI()
 
 # load model to GPU
-model = YOLO("model_unzipped/best.pt")
+model = YOLO("yolo11l.pt")
 model.to('cuda')
 
 @app.websocket("/ws")
@@ -27,10 +27,14 @@ async def websocket_endpoint(websocket: WebSocket):
             frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             
             if frame is not None:
-                results_gen = model.predict(frame, stream=True, verbose=False, conf=0.25)
-                result = next(results_gen)
-                
-                annotated_frame = result.plot()
+                # # streaming?
+                # results_gen = model.predict(frame, stream=True, verbose=False, conf=0.50)
+                # result = next(results_gen)
+                # annotated_frame = result.plot()
+
+                # single frames?
+                results = model.predict(frame, verbose=False, conf=0.50)
+                annotated_frame = results[0].plot()
                 
                 # send back
                 _, buffer = cv2.imencode('.jpg', annotated_frame)

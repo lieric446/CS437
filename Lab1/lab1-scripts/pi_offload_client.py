@@ -3,6 +3,10 @@ from picamera2 import Picamera2
 import asyncio
 import websockets
 import numpy as np
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 picam2 = Picamera2()
 config = picam2.create_video_configuration(
@@ -13,7 +17,7 @@ picam2.configure(config)
 picam2.start()
 
 async def pi_stream():
-    uri = "ws://COMPUTER_IP:8000/ws"
+    uri = f"ws://{os.getenv('LOCAL_SERVER_IP')}:{os.getenv('LOCAL_SERVER_PORT')}/ws"
 
     async with websockets.connect(uri) as websocket:
         while True:

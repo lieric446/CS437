@@ -2,5 +2,4 @@ Lab1/picar-x/
 Lab1/robot-hat/
 Lab1/vilib/
 
-Lab1/lab1-scripts/model.tar.gz
-Lab1/lab1-scripts/model_unzipped/
+*.env
