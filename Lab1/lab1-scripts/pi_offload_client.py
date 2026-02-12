@@ -5,6 +5,8 @@ import websockets
 import numpy as np
 from dotenv import load_dotenv
 import os
+import json
+import struct
 
 load_dotenv()
 
@@ -29,10 +31,23 @@ async def pi_stream():
 
             # get annotated bytes
             data = await websocket.recv()
-            nparr = np.frombuffer(data, np.uint8)
-            annotated = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            # get the header
+            header_size = 4
+            header = data[:header_size]
 
-            cv2.imshow('WebSocket Stream', annotated)
+            # get the metadata
+            metadata_length = struct.unpack('!I', header)[0]
+            metadata_bytes = data[header_size:header_size + metadata_length]
+            metadata = json.loads(metadata_bytes.decode('utf-8'))
+
+            # get the annotated image bytes
+            frame_bytes = data[header_size + metadata_length:]
+            nparr = np.frombuffer(frame_bytes, np.uint8)
+            annotated_frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+
+            cv2.imshow('WebSocket Stream', annotated_frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
