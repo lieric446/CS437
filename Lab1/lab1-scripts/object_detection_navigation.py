@@ -28,7 +28,8 @@ TIME_PER_FRAME = 1 / FPS
 # detect objects in the frame, then decided to move
 # left/right depending on the position of objects
 # annotated in the frame
-async def server_connection(waiting_annotation_queue, annotated_queue):
+async def server_connection(waiting_annotation_queue: queue.Queue, 
+                            annotated_queue: queue.Queue):
     uri = f"ws://{os.getenv('LOCAL_SERVER_IP')}:{os.getenv('LOCAL_SERVER_PORT')}/ws"
 
     while True:
@@ -78,7 +79,7 @@ picam2.configure(config)
 picam2.start()
 
 # function to stream frame to see what camera sees
-def picam_stream(stream_queue):
+def picam_stream(stream_queue: queue.Queue):
     while True:
         frame = picam2.capture_array()
         if stream_queue.full():
@@ -87,7 +88,10 @@ def picam_stream(stream_queue):
         time.sleep(TIME_PER_FRAME)
 
 
-async def main(picam_stream_queue, waiting_annotation_queue, annotated_queue, picar):
+async def main(picam_stream_queue: queue.Queue, 
+               waiting_annotation_queue: queue.Queue, 
+               annotated_queue: queue.Queue, 
+               picar: Picarx):
     obstacles_detected = 0
     # not all frames will be annotated, so we need to keep track of the
     last_annotated_frame_data = None
