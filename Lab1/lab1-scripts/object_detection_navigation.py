@@ -19,7 +19,7 @@ load_dotenv()
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
 OBSTACLES_DETECTED_STOP = 5
-SAFE_DISTANCE = 30
+SAFE_DISTANCE = 40
 FPS = 20
 TIME_PER_FRAME = 1 / FPS
 
@@ -103,12 +103,8 @@ async def main(picam_stream_queue: queue.Queue,
         waiting_annotation_queue.put(frame_to_annotate)
 
         # get the annotated frame and metadata, and show the frame
-        annotated_data = annotated_queue.get()
-        annotated_frame = annotated_data['frame']
-        metadata = annotated_data['metadata']
-        if metadata['annotated']:
-            last_annotated_frame_data = annotated_data
-        cv2.imshow("Annotated Frame", annotated_frame)
+        last_annotated_frame_data = annotated_queue.get()
+        cv2.imshow("Annotated Frame", last_annotated_frame_data['frame'])
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -123,58 +119,82 @@ async def main(picam_stream_queue: queue.Queue,
             picar.forward(0)
             picar.set_dir_servo_angle(0)
             picar.backward(60)
-            time.sleep(1)
+            time.sleep(1.5)
             picar.forward(0)
+            obstacles_detected += 1
 
-            if last_annotated_frame_data is not None:
+            if last_annotated_frame_data['metadata']['annotated']:
                 coords = last_annotated_frame_data['metadata']['largest_box_coords']
                 x_center = (coords[0] + coords[2]) / 2
                 
                 if x_center > FRAME_WIDTH / 2:
-                    picar.set_dir_servo_angle(-30)
+                    picar.set_dir_servo_angle(-20)
                 else:
-                    picar.set_dir_servo_angle(30)
+                    picar.set_dir_servo_angle(20)
 
-                obstacles_detected += 1
                 # move forward at angle
                 picar.forward(25)
-                time.sleep(1)
-                # reset angle, go straight for a little to avoid obstacle
-                picar.forward(0)
-                picar.set_dir_servo_angle(0)
-                picar.forward(25)
+                time.sleep(1.5)
             else:
-                # turn right, read distance
-                picar.set_dir_servo_angle(30)
-                picar.forward(25)
-                time.sleep(0.5)
-                picar.forward(0)
-                right_distance = round(picar.ultrasonic.read(), 2)
+                # # turn right, read distance
+                # picar.set_dir_servo_angle(20)
+                # picar.forward(25)
+                # time.sleep(1)
+                # picar.forward(0)
+                # # take five distance readings and average them to reduce noise
+                # right_distance = 0
+                # for _ in range(5):
+                #     right_distance += round(picar.ultrasonic.read(), 2)
+                #     time.sleep(0.1)
+                # right_distance = round(right_distance / 5, 2)
 
-                # go back to original position
-                picar.backward(25)
-                time.sleep(0.5)
+                # # go back to original position
+                # picar.backward(25)
+                # time.sleep(1)
 
-                # turn left, read distance
-                picar.set_dir_servo_angle(-30)
-                picar.forward(25)
-                time.sleep(0.5)
-                picar.forward(0)
-                left_distance = round(picar.ultrasonic.read(), 2)
+                # # turn left, read distance
+                # picar.set_dir_servo_angle(-20)
+                # picar.forward(25)
+                # time.sleep(1)
+                # picar.forward(0)
+                # # take five distance readings and average them to reduce noise
+                # left_distance = 0
+                # for _ in range(5):
+                #     left_distance += round(picar.ultrasonic.read(), 2)
+                #     time.sleep(0.1)
+                # left_distance = round(left_distance / 5, 2)
 
-                # go back to original position
-                picar.backward(25)
-                time.sleep(0.5)
-                picar.set_dir_servo_angle(0)
+                # # go back to original position
+                # picar.backward(25)
+                # time.sleep(1)
+                # picar.forward(0)
+                # picar.set_dir_servo_angle(0)
 
-                # turn to direction with more space
-                if right_distance > left_distance:
-                    picar.set_dir_servo_angle(30)
+                # # turn to direction with more space
+                # if right_distance > left_distance:
+                #     picar.set_dir_servo_angle(20)
+                # else:
+                #     picar.set_dir_servo_angle(-20)
+                # picar.forward(25)
+                # time.sleep(1)
+                SAFE_DIST = 40
+                DANGER_DIST = 20
+                POWER = 25
+                if distance >= SAFE_DIST:
+                    # Path is clear
+                    px.set_dir_servo_angle(0)
+                    px.forward(POWER)
+                elif distance >= DANGER_DIST:
+                    # Getting close, turn left to avoid
+                    px.set_dir_servo_angle(-30)
+                    px.forward(POWER)
+                    time.sleep(0.1)
                 else:
-                    picar.set_dir_servo_angle(-30)
-                picar.forward(25)
-                time.sleep(0.5)
-                picar.set_dir_servo_angle(0)
+                    # Too close! Stop and back up
+                    px.forward(0)
+                    px.set_dir_servo_angle(30)
+                    px.backward(POWER)
+                    time.sleep(0.5)
 
 
 if __name__ == "__main__":
