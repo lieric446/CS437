@@ -10,7 +10,7 @@ import math
 GRID_SIZE = 300                         # in cms
 OBSTACLE_PADDING = 1                    # Padding (in cm) used to mark on all sides of obstacles.
 CAR_LOCATION = (GRID_SIZE // 2, 0)             # Car position (x,y). bottom center of the grid
-CAR_DIMENSIONS = (17, 23)
+CAR_DIMENSIONS = (15, 23)
 DIRECTION = (0, 1)        # Car direction as in (x, y).
 MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
                 , dtype=np.int32)
@@ -35,6 +35,7 @@ def printMap():
     plt.show()
 def updateMapWithObstacle():
     global DIRECTION
+    
     global CAR_LOCATION
     global MAP
     global GRID_SIZE
@@ -43,9 +44,9 @@ def updateMapWithObstacle():
     car_heading_rad = math.atan2(DIRECTION[1], DIRECTION[0])
     for angle in range(-30, 30, 5):
         px.set_cam_pan_angle(angle)
-        time.sleep(0.2)
+        time.sleep(0.1)
         distance = px.get_distance()
-        if distance < 50:  # If an obstacle is detected within 50 cm
+        if distance < 50: # If an obstacle is detected within 50 cm
             # Calculate the obstacle's position based on the car's current location and direction
             obs_x = CAR_LOCATION[0] + int(distance * math.cos(math.radians(angle)+car_heading_rad))
             obs_y = CAR_LOCATION[1] + int(distance * math.sin(math.radians(angle)+car_heading_rad))
@@ -89,7 +90,7 @@ def turnLeft():
     time.sleep(0.6)
     px.set_dir_servo_angle(0)
     px.backward(8)
-    time.sleep(0.7)
+    time.sleep(0.6)
     (i, j) = CAR_LOCATION
     (x,y) = DIRECTION
     (a, b) = CAR_DIMENSIONS
@@ -130,27 +131,26 @@ def turnRight():
     px.backward(8)
     time.sleep(0.6)
     (i, j) = CAR_LOCATION
-    (x,y) = DIRECTION
+    (x, y) = DIRECTION
     (a, b) = CAR_DIMENSIONS
     if (x, y) == (1,0):
-        CAR_LOCATION = (i - b//4, j + a // 4)
-    if (x, y) == (0,1):
         CAR_LOCATION = (i - b//4, j - a // 4)
-    if (x, y) == (-1,0):
+    if (x, y) == (0,1):
         CAR_LOCATION = (i + b//4, j - a // 4)
-    if (x, y) == (0,-1):
+    if (x, y) == (-1,0):
         CAR_LOCATION = (i + b//4, j + a // 4)
-    DIRECTION = (-y,x)
+    if (x, y) == (0,-1):
+        CAR_LOCATION = (i - b//4, j - a // 4)
+    DIRECTION = (y, -x)
     CAR_DIMENSIONS = (b, a)
     updateMapwithCar()
 def turn180():
     turnRight()
     turnRight()
-def forwardOneStep(): 
+def forwardOneStep():
     global MAP
     global CAR_LOCATION
     global DIRECTION
-    global CAR_DIMENSIONS
     px.forward(20)
     time.sleep(.8)
     px.set_dir_servo_angle(7)
@@ -178,30 +178,46 @@ def main():
     initMap()
     forwardOneStep()
     updateMapWithObstacle()
+    turnLeft()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    turnRight()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
+    turnRight()
+    updateMapWithObstacle()
+    forwardOneStep()
+    updateMapWithObstacle()
     forwardOneStep()
     updateMapWithObstacle()
     turnLeft()
     updateMapWithObstacle()
     forwardOneStep()
     updateMapWithObstacle()
-    turnRight()
-    updateMapWithObstacle()
-    forwardOneStep()
-    updateMapWithObstacle()
-    forwardOneStep()
-    updateMapWithObstacle()
-    forwardOneStep()
-    updateMapWithObstacle()
-    forwardOneStep()
-    updateMapWithObstacle()
-    turnRight()
-    updateMapWithObstacle()
     printMap()
+def getCarLocation():
+    global CAR_LOCATION
+    carLocation = CAR_LOCATION
+    return carLocation
+def setCarLocation(carLocation):
+    global CAR_LOCATION 
+    CAR_LOCATION= carLocation
     
 if __name__ == "__main__":
     
     try: 
         px = Picarx()
+        #turnLeft()
         main()
     except KeyboardInterrupt:
         pass
