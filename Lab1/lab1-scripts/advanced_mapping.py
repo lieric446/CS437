@@ -43,9 +43,9 @@ def updateMapWithObstacle():
     car_heading_rad = math.atan2(DIRECTION[1], DIRECTION[0])
     for angle in range(-30, 30, 5):
         px.set_cam_pan_angle(angle)
-        time.sleep(0.1)
+        time.sleep(0.2)
         distance = px.get_distance()
-        if distance < 50:  # If an obstacle is detected within 30 cm
+        if distance < 50:  # If an obstacle is detected within 50 cm
             # Calculate the obstacle's position based on the car's current location and direction
             obs_x = CAR_LOCATION[0] + int(distance * math.cos(math.radians(angle)+car_heading_rad))
             obs_y = CAR_LOCATION[1] + int(distance * math.sin(math.radians(angle)+car_heading_rad))
@@ -68,6 +68,7 @@ def updateMapwithCar():
 def turnLeft():
     global DIRECTION
     global CAR_DIMENSIONS
+    global CAR_LOCATION
     px.set_dir_servo_angle(29)
     px.backward(8)
     time.sleep(0.5)
@@ -89,14 +90,24 @@ def turnLeft():
     px.set_dir_servo_angle(0)
     px.backward(8)
     time.sleep(0.7)
+    (i, j) = CAR_LOCATION
     (x,y) = DIRECTION
-    DIRECTION = (-y,x)
     (a, b) = CAR_DIMENSIONS
+    if (x, y) == (1,0):
+        CAR_LOCATION = (i - b//4, j + a // 4)
+    if (x, y) == (0,1):
+        CAR_LOCATION = (i - b//4, j - a // 4)
+    if (x, y) == (-1,0):
+        CAR_LOCATION = (i + b//4, j - a // 4)
+    if (x, y) == (0,-1):
+        CAR_LOCATION = (i + b//4, j + a // 4)
+    DIRECTION = (-y,x)
     CAR_DIMENSIONS = (b, a)
     updateMapwithCar()
 def turnRight():
     global DIRECTION
     global CAR_DIMENSIONS
+    global CAR_LOCATION
     px.set_dir_servo_angle(-28)
     px.backward(8)
     time.sleep(0.5)
@@ -118,9 +129,18 @@ def turnRight():
     px.set_dir_servo_angle(0)
     px.backward(8)
     time.sleep(0.6)
-    (x, y) = DIRECTION
-    DIRECTION = (y, -x)
+    (i, j) = CAR_LOCATION
+    (x,y) = DIRECTION
     (a, b) = CAR_DIMENSIONS
+    if (x, y) == (1,0):
+        CAR_LOCATION = (i - b//4, j + a // 4)
+    if (x, y) == (0,1):
+        CAR_LOCATION = (i - b//4, j - a // 4)
+    if (x, y) == (-1,0):
+        CAR_LOCATION = (i + b//4, j - a // 4)
+    if (x, y) == (0,-1):
+        CAR_LOCATION = (i + b//4, j + a // 4)
+    DIRECTION = (-y,x)
     CAR_DIMENSIONS = (b, a)
     updateMapwithCar()
 def turn180():
