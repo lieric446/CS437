@@ -177,13 +177,6 @@ def main():
     turnRight()
     updateMapWithObstacle()
     printMap()
-def getCarLocation():
-    global CAR_LOCATION
-    carLocation = CAR_LOCATION
-    return carLocation
-def setCarLocation(carLocation):
-    global CAR_LOCATION 
-    CAR_LOCATION= carLocation
     
 if __name__ == "__main__":
     
