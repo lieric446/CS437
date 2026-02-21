@@ -14,6 +14,7 @@ CAR_DIMENSIONS = (15, 23)
 DIRECTION = (0, 1)                         # Car direction as in (x, y).
 MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
                 , dtype=np.int32)
+STEP_DISTANCE = 20                        # Distance (in cm) for each forward/backward step
 def initMap():
     global CAR_LOCATION
     global MAP
@@ -151,26 +152,28 @@ def forwardOneStep():
     global MAP
     global CAR_LOCATION
     global DIRECTION
+    global STEP_DISTANCE
     px.forward(20)
     time.sleep(.8)
     px.set_dir_servo_angle(7)
     px.forward(20)
     time.sleep(.8)
     px.set_dir_servo_angle(0)
-    CAR_LOCATION = (CAR_LOCATION[0] + 20*DIRECTION[0], CAR_LOCATION[1] + 20*DIRECTION[1])
+    CAR_LOCATION = (CAR_LOCATION[0] + STEP_DISTANCE*DIRECTION[0], CAR_LOCATION[1] + STEP_DISTANCE*DIRECTION[1])
     MAP[CAR_LOCATION[0], CAR_LOCATION[1]] = 2
     updateMapwithCar()
 def backwardOneStep():
     global CAR_LOCATION
     global MAP
-    global CAR_LOCATION
+    global DIRECTION
+    global STEP_DISTANCE
     px.backward(20)
     time.sleep(.65)
     px.set_dir_servo_angle(7)
     px.backward(20)
     time.sleep(.65)
     px.set_dir_servo_angle(0)
-    CAR_LOCATION = (CAR_LOCATION[0] - 20*DIRECTION[0], CAR_LOCATION[1] - 20*DIRECTION[1])
+    CAR_LOCATION = (CAR_LOCATION[0] - STEP_DISTANCE*DIRECTION[0], CAR_LOCATION[1] - STEP_DISTANCE*DIRECTION[1])
     MAP[CAR_LOCATION[0], CAR_LOCATION[1]] = 2
     updateMapwithCar()
 def main():
