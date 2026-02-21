@@ -54,7 +54,7 @@ def updateMapWithObstacle():
                     if 0 <= obs_x + dx < GRID_SIZE and 0 <= obs_y + dy < GRID_SIZE:
                         MAP[obs_x + dx, obs_y + dy] = 1
     px.set_cam_pan_angle(0)
-    printMap()
+    #printMap()
 def updateMapwithCar():
     global DIRECTION
     global CAR_LOCATION
