@@ -7,11 +7,11 @@ import math
 
 
 #Global Variable
-GRID_SIZE = 300                         # in cms
-OBSTACLE_PADDING = 1                    # Padding (in cm) used to mark on all sides of obstacles.
-CAR_LOCATION = (GRID_SIZE // 2, 0)             # Car position (x,y). bottom center of the grid
+GRID_SIZE = 300                           # in cms
+OBSTACLE_PADDING = 1                      # Padding (in cm) used to mark on all sides of obstacles.
+CAR_LOCATION = (GRID_SIZE // 2, 0)        # Car position (x,y). bottom center of the grid
 CAR_DIMENSIONS = (15, 23)
-DIRECTION = (0, 1)        # Car direction as in (x, y).
+DIRECTION = (0, 1)                         # Car direction as in (x, y).
 MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
                 , dtype=np.int32)
 def initMap():
@@ -50,7 +50,7 @@ def updateMapWithObstacle():
             # Calculate the obstacle's position based on the car's current location and direction
             obs_x = CAR_LOCATION[0] + int(distance * math.cos(math.radians(angle)+car_heading_rad))
             obs_y = CAR_LOCATION[1] + int(distance * math.sin(math.radians(angle)+car_heading_rad))
-            for dx in range(-OBSTACLE_PADDING, OBSTACLE_PADDING+1):    #interpolation - adding padding between the points
+            for dx in range(-OBSTACLE_PADDING, OBSTACLE_PADDING+1):   
                 for dy in range(-OBSTACLE_PADDING, OBSTACLE_PADDING + 1):
                     if 0 <= obs_x + dx < GRID_SIZE and 0 <= obs_y + dy < GRID_SIZE:
                         MAP[obs_x + dx, obs_y + dy] = 1
@@ -204,15 +204,7 @@ def main():
     updateMapWithObstacle()
     forwardOneStep()
     updateMapWithObstacle()
-    printMap()
-def getCarLocation():
-    global CAR_LOCATION
-    carLocation = CAR_LOCATION
-    return carLocation
-def setCarLocation(carLocation):
-    global CAR_LOCATION 
-    CAR_LOCATION= carLocation
-    
+    printMap()    
 if __name__ == "__main__":
     
     try: 
@@ -222,7 +214,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     except Exception as e:
-        print(f"\033[31mERROR: {e}\033[m")
+        print(f"Error: {e}")
     finally: 
         px.stop()
  
