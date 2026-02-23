@@ -87,6 +87,7 @@ def camera_detection():
                 
                 if d < 20 and traffic_light:
                     music.sound_play('../car-double-horn.wav')
+                    px.stop()
                     #print("Object too close! Stopping.")
                     #pc.stop()
                 #else:
