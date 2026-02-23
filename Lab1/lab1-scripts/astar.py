@@ -17,7 +17,7 @@ MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
 
 
 # Global Goal Variable
-GOAL_LOCATION = (7, 10)  # Set your target (x, y) here
+GOAL_LOCATION = (10, 14)  # Set your target (x, y) here
 
 def heuristic(a, b):
     # Manhattan distance for grid movement
@@ -150,18 +150,29 @@ def updateMapWithObstacle():
     global OBSTACLE_PADDING
     px.stop()
     car_heading_rad = math.atan2(DIRECTION[1], DIRECTION[0])
-    for angle in range(-30, 30, 5):
+
+    for angle in range(-30, 31, 5): # Included 30 by changing stop to 31
         px.set_cam_pan_angle(angle)
-        time.sleep(0.1)
+        time.sleep(0.1) 
+    
         distance = px.get_distance()
-        if distance < 40: # If an obstacle is detected within 50 cm
-            # Calculate the obstacle's position based on the car's current location and direction
-            obs_x = CAR_LOCATION[0] + (int(distance * math.cos(math.radians(angle)+car_heading_rad)) // 20)
-            obs_y = CAR_LOCATION[1] + (int(distance * math.sin(math.radians(angle)+car_heading_rad)) // 20)
-            #print((obs_x,obs_y), (CAR_LOCATION[0],CAR_LOCATION[1]))
-            
+    
+        # Check for valid sensor data (ignore -1 or 0 if sensor fails)
+        if 0 < distance < 40:
+            # Total angle relative to the world map
+            total_rad = math.radians(angle) + car_heading_rad
+        
+            # Calculate relative offsets
+            offset_x = (distance * math.cos(total_rad)) / 20
+            offset_y = (distance * math.sin(total_rad)) / 20
+        
+            # Map to absolute grid coordinates
+            obs_x = int(CAR_LOCATION[0] + offset_x)
+            obs_y = int(CAR_LOCATION[1] + offset_y)
+        
+            # Bounds checking before updating the map
             if 0 <= obs_x < GRID_SIZE and 0 <= obs_y < GRID_SIZE:
-                MAP[obs_x, obs_y] = 1
+                MAP[obs_x, obs_y] = 1 
 
             #for dx in range(-OBSTACLE_PADDING, OBSTACLE_PADDING+1):    #interpolation - adding padding between the points
             #    for dy in range(-OBSTACLE_PADDING, OBSTACLE_PADDING + 1):
@@ -292,7 +303,6 @@ def main():
     global CAR_LOCATION, GOAL_LOCATION, MAP
     print(f"Starting Navigation from {CAR_LOCATION} to {GOAL_LOCATION}")
     initMap()
-    updateMapWithObstacle()
     while CAR_LOCATION != GOAL_LOCATION:        
 
         # 2) PLAN: Run A* to find current best path
@@ -316,7 +326,7 @@ def main():
             updateMapWithObstacle()
             time.sleep(1)
 
-        printMap()  # Optional visualization each step
+        #printMap()  # Optional visualization each step
 
     print("Goal Reached!")
 
