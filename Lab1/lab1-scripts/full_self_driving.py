@@ -27,7 +27,7 @@ MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
 
 
 # Global Goal Variable
-GOAL_LOCATION = (10, 14)  # Set your target (x, y) here
+GOAL_LOCATION = (11,5)  # Set your target (x, y) here
 
 def camera_detection():
     music = Music()
@@ -61,7 +61,7 @@ def camera_detection():
 
     cam = make_camera(args.cam_width, args.cam_height)
     last = 0.0
-
+    stopped_at_traffic_light = False
     try:
         while True:
             frame_rgb = cam.capture_array()
@@ -72,7 +72,8 @@ def camera_detection():
             dets = parse_ssd(interpreter, labels, args.threshold, args.topk)
 
             now = time.time()
-            traffic_light = False
+            traffic_light = True
+        
             if now - last >= args.print_every:
                 last = now
                 print("Detections:", dets)
@@ -85,9 +86,10 @@ def camera_detection():
                         if name == "traffic light":
                             traffic_light = True    
                 
-                if d < 20 and traffic_light:
-                    music.sound_play('../car-double-horn.wav')
-                    px.stop()
+                if d < 40 and traffic_light and stopped_at_traffic_light != True:
+                    music.sound_play('car-double-horn.wav')
+                    #px.stop()
+                    stopped_at_traffic_light = True
                     #print("Object too close! Stopping.")
                     #pc.stop()
                 #else:
@@ -199,9 +201,10 @@ def move_to_next_cell(target_cell):
     if not scan_and_is_cell_free(target_cell):
         print(f"Blocked ahead at {target_cell}; re-planning without moving.")
         return False
-
+    px.stop()
     # Safe to proceed
     forwardOneStep()
+    px.stop()
     return True
 
 def initMap():
@@ -289,15 +292,15 @@ def turnLeft():
     px.set_dir_servo_angle(-29)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(30)
+    px.set_dir_servo_angle(29)
     px.backward(8)
-    time.sleep(0.6)
+    time.sleep(0.5)
     px.set_dir_servo_angle(-29)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(0)
-    px.backward(8)
-    time.sleep(0.6)
+    #px.set_dir_servo_angle(30)
+    #px.backward(8)
+    #time.sleep(0.6)
     (i, j) = CAR_LOCATION
     (x,y) = DIRECTION
     (a, b) = CAR_DIMENSIONS
@@ -311,30 +314,37 @@ def turnLeft():
     #    CAR_LOCATION = (i + b//4, j + a // 4)
     DIRECTION = (-y,x)
     CAR_DIMENSIONS = (b, a)
+    px.set_dir_servo_angle(0)
     updateMapwithCar()
 def turnRight():
     global DIRECTION
     global CAR_DIMENSIONS
     global CAR_LOCATION
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(0)
+    px.set_dir_servo_angle(-30)
+    px.backward(8)
+    time.sleep(0.6)
+    px.set_dir_servo_angle(30)
+    px.forward(12)
+    time.sleep(0.6)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.6)
     (i, j) = CAR_LOCATION
@@ -348,6 +358,7 @@ def turnRight():
     #    CAR_LOCATION = (i + b//4, j + a // 4)
     #if (x, y) == (0,-1):
     #    CAR_LOCATION = (i - b//4, j - a // 4)
+    px.set_dir_servo_angle(0)
     DIRECTION = (y, -x)
     CAR_DIMENSIONS = (b, a)
     updateMapwithCar()
@@ -360,7 +371,7 @@ def forwardOneStep():
     global DIRECTION
     px.forward(20)
     time.sleep(.8)
-    px.set_dir_servo_angle(7)
+    px.set_dir_servo_angle(5)
     px.forward(20)
     time.sleep(.8)
     px.set_dir_servo_angle(0)
@@ -380,7 +391,6 @@ def backwardOneStep():
     CAR_LOCATION = (CAR_LOCATION[0] - DIRECTION[0], CAR_LOCATION[1] - DIRECTION[1])
     MAP[CAR_LOCATION[0], CAR_LOCATION[1]] = 2
     updateMapwithCar()
-
 def main():
     global CAR_LOCATION, GOAL_LOCATION, MAP
     print(f"Starting Navigation from {CAR_LOCATION} to {GOAL_LOCATION}")

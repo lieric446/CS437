@@ -17,7 +17,7 @@ MAP = np.zeros((GRID_SIZE, GRID_SIZE)     # Initialize empty map
 
 
 # Global Goal Variable
-GOAL_LOCATION = (10, 14)  # Set your target (x, y) here
+GOAL_LOCATION = (11, 0)  # Set your target (x, y) here
 
 def heuristic(a, b):
     # Manhattan distance for grid movement
@@ -117,9 +117,10 @@ def move_to_next_cell(target_cell):
     if not scan_and_is_cell_free(target_cell):
         print(f"Blocked ahead at {target_cell}; re-planning without moving.")
         return False
-
+    px.stop()
     # Safe to proceed
     forwardOneStep()
+    px.stop()
     return True
 
 def initMap():
@@ -207,15 +208,15 @@ def turnLeft():
     px.set_dir_servo_angle(-29)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(30)
+    px.set_dir_servo_angle(29)
     px.backward(8)
-    time.sleep(0.6)
+    time.sleep(0.5)
     px.set_dir_servo_angle(-29)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(0)
-    px.backward(8)
-    time.sleep(0.6)
+    #px.set_dir_servo_angle(30)
+    #px.backward(8)
+    #time.sleep(0.6)
     (i, j) = CAR_LOCATION
     (x,y) = DIRECTION
     (a, b) = CAR_DIMENSIONS
@@ -229,30 +230,37 @@ def turnLeft():
     #    CAR_LOCATION = (i + b//4, j + a // 4)
     DIRECTION = (-y,x)
     CAR_DIMENSIONS = (b, a)
+    px.set_dir_servo_angle(0)
     updateMapwithCar()
 def turnRight():
     global DIRECTION
     global CAR_DIMENSIONS
     global CAR_LOCATION
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(-28)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.5)
-    px.set_dir_servo_angle(28)
+    px.set_dir_servo_angle(30)
     px.forward(12)
     time.sleep(0.6)
-    px.set_dir_servo_angle(0)
+    px.set_dir_servo_angle(-30)
+    px.backward(8)
+    time.sleep(0.6)
+    px.set_dir_servo_angle(30)
+    px.forward(12)
+    time.sleep(0.6)
+    px.set_dir_servo_angle(-30)
     px.backward(8)
     time.sleep(0.6)
     (i, j) = CAR_LOCATION
@@ -266,6 +274,7 @@ def turnRight():
     #    CAR_LOCATION = (i + b//4, j + a // 4)
     #if (x, y) == (0,-1):
     #    CAR_LOCATION = (i - b//4, j - a // 4)
+    px.set_dir_servo_angle(0)
     DIRECTION = (y, -x)
     CAR_DIMENSIONS = (b, a)
     updateMapwithCar()
@@ -278,7 +287,7 @@ def forwardOneStep():
     global DIRECTION
     px.forward(20)
     time.sleep(.8)
-    px.set_dir_servo_angle(7)
+    px.set_dir_servo_angle(5)
     px.forward(20)
     time.sleep(.8)
     px.set_dir_servo_angle(0)
@@ -303,6 +312,7 @@ def main():
     global CAR_LOCATION, GOAL_LOCATION, MAP
     print(f"Starting Navigation from {CAR_LOCATION} to {GOAL_LOCATION}")
     initMap()
+    #updateMapWithObstacle()
     while CAR_LOCATION != GOAL_LOCATION:        
 
         # 2) PLAN: Run A* to find current best path
@@ -335,6 +345,8 @@ if __name__ == "__main__":
     
     try: 
         px = Picarx()
+        #turnRight()
+        #forwardOneStep()
         main()
     except KeyboardInterrupt:
         pass
