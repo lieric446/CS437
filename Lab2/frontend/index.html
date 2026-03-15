@@ -1,0 +1,117 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="index.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron App</title>
+</html>
+<body>
+    <h1>Welcome to Electron!</h1>
+    <span>Enter your name: </span>
+    <input type="text" id="name" placeholder="Your Name">
+    <button onclick="greeting()">Greet Me</button>
+
+    <br>
+    <span id="greet"> </span>
+    <br>
+    <span id="greet_from_server"> </span>
+
+    <button id="clickMe">Click Me</button>
+    <script>
+        const button = document.getElementById('clickMe');
+        button.addEventListener('click', () => {
+            ////alert('Button Clicked!');
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      .container{
+                  display: flex;
+                }
+                .green {
+                  cursor: pointer;
+                }
+                .green:hover {
+                  color: green;
+                  background-color: green;
+                }
+
+    </style>
+    <style>
+    img { max-width: 100%; border: 1px solid #ccc; }
+  </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://unpkg.com/sweet////alert/dist/sweet////alert.min.js"></script>
+    <script src="./index.js"></script>
+    
+  </head>
+
+  <body>
+    <div class="container">
+      
+   
+      <div class="jumbotron">
+      <h2>CS498: IoT -- Lab 2</h2>
+
+      <!-- <video class="center" width="600" height="400" controls>
+        <source src="samplevid.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+      </video> -->
+      <img src="./media/default_background.png" id='pics'>
+      <img id="stream" alt="Pi camera stream" style="display: none;"/>
+      <div style="display:flex; justify-content: center; margin-top: 16px;">
+        <button class="btn btn-primary" onclick="window.piAPI.showHideStream('start_stream')">Start Stream</button>
+        <button class="btn btn-danger" onclick="window.piAPI.showHideStream('stop_stream')">Stop Stream</button>
+      </div>
+    </div> 
+  
+  </div>
+
+  <div class="row">
+    <div class="container">
+        <div class="jumbotron text-center col-md-6">
+            <span>&nbsp;&nbsp;</span> 
+            <span id="upArrow" class="green" style='font-size:50px; color:grey;' onclick="window.piAPI.sendMessage('forward')">&#8679;</span>
+            <br>
+            <span id="leftArrow" class="green" style='font-size:45px; color:grey;' onclick="window.piAPI.sendMessage('left')">&#8678;</span>
+            <!-- <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  -->
+            <button class="btn btn-danger" style="margin: 32px;" onclick="window.piAPI.sendMessage('stop')">Stop</button>
+            <span id="rightArrow" class="green"  style='font-size:45px; color:grey;' onclick="window.piAPI.sendMessage('right')">&#8680;</span>
+            <br>
+            <span>&nbsp;&nbsp;</span> 
+            <span id="downArrow" class="green" style='font-size:50px; color:grey;' onclick="window.piAPI.sendMessage('backward')">&#8681;</span>
+            
+        </div>
+        
+        <div class="jumbotron text-left col-md-6">
+            
+  
+        <input id="message" type="text" placeholder="message to Pi"/>
+        <button class="btn btn-success" onclick="window.piAPI.sendMessage()">Sumbit</button>
+          <p>
+            <span id="direction_dot" style="color:Green">&bull;</span> Car Direction: <span id="direction"> </span>
+           <br>
+           <span id="graydscale_dot" style="color:Green">&bull;</span> Grayscale Scale: <span id="graydscale"> </span>
+           <br>
+           <span id="speed_dot" style="color:green">&bull;</span> Speed: <span id="speed">0.0</span>  
+           <br>
+           <span id="distance_dot" style="color:green">&bull;</span> Distance Object: <span id="distance">0.0</span>
+           <br>
+           <span id="temprature_dot" style="color:green">&bull;</span> Temperature of the Pi: <span id="temperature">0.0</span>
+           <br>
+           Bluetooth return value: <span id="bluetooth"> </span>
+          </p>  
+        </div>
+    </div>
+</div>
+ <script src="./renderer.js"></script>
+  </body>
+</html>
+
