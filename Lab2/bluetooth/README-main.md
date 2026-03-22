@@ -1,4 +1,4 @@
-zip file has full flutter app, dart pages are the one's we modified from the example
+zip file has full flutter app, dart pages (main, MainPage, and AppPage) are the one's we modified from the example
 
 commands for flutter
 flutter pub get
