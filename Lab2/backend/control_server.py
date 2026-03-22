@@ -59,13 +59,13 @@ def move_stop():
 
 def turn_left(angle=20):
     global current_steering_angle
-    current_steering_angle = -abs(angle)
+    current_steering_angle = current_steering_angle - abs(angle)
     px.set_dir_servo_angle(current_steering_angle)
 
 
 def turn_right(angle=20):
     global current_steering_angle
-    current_steering_angle = abs(angle)
+    current_steering_angle = current_steering_angle + abs(angle)
     px.set_dir_servo_angle(current_steering_angle)
 
 
