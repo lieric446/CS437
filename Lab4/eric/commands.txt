@@ -1,0 +1,5 @@
+sudo docker run -p 8883:8883 -p 8443:8443 -v /greengrass/v2:/greengrass/v2 -e RUN_WITH_ROOT=true platform/aws-iot-greengrass:nucleus-version
+
+nc -zv 10.0.0.99 8883
+
+python3 basic_discovery.py   --thing_name vehicle0   --topic 'vehicle/emission/data'   --message 'Hello World!'   --ca_file /home/lieric446/Desktop/CS437/Lab4/AmazonRootCA1.pem   --cert /home/lieric446/Desktop/CS437/Lab4/eric/vehicle_certs/vehicle0/certificate.pem.crt   --key /home/lieric446/Desktop/CS437/Lab4/eric/vehicle_certs/vehicle0/private.pem.key   --region us-east-2
