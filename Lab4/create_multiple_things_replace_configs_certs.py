@@ -8,9 +8,9 @@ from botocore.exceptions import ClientError
 # ----------------------------
 # Configuration
 # ----------------------------
-REGION = "<your-region>"
-THING_GROUP_NAME = "<your-thing-group>"
-POLICY_NAME = "<your-policy>"
+REGION = "us-east-2"
+THING_GROUP_NAME = "cs437-group"
+POLICY_NAME = "rpi-policy"
 
 # Keep this small to avoid unnecessary usage
 DEVICE_COUNT = 5
@@ -106,7 +106,7 @@ def main() -> None:
     session = boto3.Session(region_name=REGION)
     iot_client = session.client("iot")
 
-    for i in range(3, DEVICE_COUNT + 1):
+    for i in range(0, DEVICE_COUNT):
         thing_name = f"{THING_NAME_PREFIX}{i}"
         print(f"\n=== Processing {thing_name} ===")
 
