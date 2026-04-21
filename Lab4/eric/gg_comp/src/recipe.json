@@ -1,0 +1,75 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "gg_comp",
+  "ComponentVersion": "1.0.11",
+  "ComponentDescription": "AWS Greengrass PubSub SDK template component.",
+  "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
+  "ComponentDependencies": {
+    "aws.greengrass.TokenExchangeService": {
+      "VersionRequirement": "^2.0.0",
+      "DependencyType": "HARD"
+    }
+  },
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "GGV2PubSubSdkConfig": {
+        "base-pubsub-topic": "gg_comp",
+        "ipc-subscribe-topics": [],
+        "mqtt-subscribe-topics": [
+          "vehicle/emission/data"
+        ]
+      },
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "gg_comp:pubsub:1": {
+            "policyDescription": "Allows local IPC communication.",
+            "operations": [
+              "aws.greengrass#PublishToTopic",
+              "aws.greengrass#SubscribeToTopic"
+            ],
+            "resources": [
+              "vehicle/emission/result"
+            ]
+          }
+        },
+        "aws.greengrass.ipc.mqttproxy": {
+          "gg_comp:mqttproxy:1": {
+            "policyDescription": "Allows communication with AWS IoT Core.",
+            "operations": [
+              "aws.greengrass#PublishToIoTCore",
+              "aws.greengrass#SubscribeToIoTCore"
+            ],
+            "resources": [
+              "vehicle/emission/data",
+              "vehicle/emission/result"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Name": "Linux",
+      "Platform": {
+        "os": "linux"
+      },
+      "Artifacts": [
+        {
+          "URI": "s3://cs437-bucket/src.zip",
+          "Unarchive": "ZIP"
+        }
+      ],
+      "Lifecycle": {
+        "Install" : {
+          "Timeout" : 300,
+          "Script" : "python3 -m ensurepip --upgrade && python3 -m pip install awsgreengrasspubsubsdk"
+        },
+        "Run": {
+          "Script": "python3 -u {artifacts:decompressedPath}/src/main.py '{configuration:/GGV2PubSubSdkConfig}'",
+          "RequiresPrivilege": "false"
+        }
+      }
+    }
+  ]
+}

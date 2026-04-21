@@ -1,4 +1,5 @@
 sudo docker run -p 8883:8883 -p 8443:8443 -v /greengrass/v2:/greengrass/v2 -e RUN_WITH_ROOT=true platform/aws-iot-greengrass:nucleus-version
+sudo docker rm -f $(sudo docker ps -a -q --filter "ancestor=platform/aws-iot-greengrass:nucleus-version")
 
 nc -zv 10.0.0.99 8883
 

@@ -6,3 +6,5 @@ Lab1/vilib/
 
 Lab4/eric/vehicle_certs/*
 Lab4/AmazonRootCA1.pem
+
+*pycache*

@@ -1,0 +1,16 @@
+{
+  "component" :{
+    "gg_comp": {
+      "author": "eric",
+      "version": "1.0.11",
+      "build": {
+        "build_system" :"zip"
+      },
+      "publish": {
+        "bucket": "cs437-bucket",
+        "region": "us-east-2"
+      }
+    }
+  },
+  "gdk_version": "1.6.2"
+}
